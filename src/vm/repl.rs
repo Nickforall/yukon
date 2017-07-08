@@ -9,6 +9,5 @@ pub fn ret_value_fmt(val: &JS_value) -> String {
         &JS_value::JS_NAN => return format!("{}", RGB(209, 154, 102).paint("NaN".to_owned())),
         &JS_value::JS_NUMBER(num) => return format!("{}", RGB(209, 154, 102).paint(format!("{}", num))),
         &JS_value::JS_STRING(ref s) => return format!("{}", RGB(152, 195, 121).paint(format!("\"{}\"", s.clone()))),
-        _ => panic!("unknown js val")
     }
 }

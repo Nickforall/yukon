@@ -16,6 +16,7 @@ mod vm;
 
 use vm::JS_value;
 
+#[cfg(not(test))]
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -26,6 +27,7 @@ fn main() {
     }
 }
 
+#[cfg(not(test))]
 fn devel() {
     let image: bytecode::Image;
 
@@ -37,6 +39,7 @@ fn devel() {
     println!("{:#?}", image);
 }
 
+#[cfg(not(test))]
 fn run_repl() {
     let mut rl = Editor::<()>::new();
 
@@ -65,6 +68,7 @@ fn run_repl() {
     }
 }
 
+#[cfg(not(test))]
 fn compile_repl(code: &str) {
     let image: bytecode::Image;
 

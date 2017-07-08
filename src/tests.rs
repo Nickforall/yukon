@@ -132,4 +132,34 @@ mod vm_tests {
         assert_eq!(compile_repl("10 / \"\""), vm::JS_value::JS_NAN)
     }
 
+    #[test]
+    fn vm_sub_numstr() {
+        assert_eq!(compile_repl("10 - \"5\""), vm::JS_value::JS_NUMBER(5 as f64))
+    }
+
+    #[test]
+    fn vm_mlp_numstr() {
+        assert_eq!(compile_repl("10 * \"5\""), vm::JS_value::JS_NUMBER(50 as f64))
+    }
+
+    #[test]
+    fn vm_div_numstr() {
+        assert_eq!(compile_repl("10 / \"5\""), vm::JS_value::JS_NUMBER(2 as f64))
+    }
+
+    #[test]
+    fn vm_sub_strnum() {
+        assert_eq!(compile_repl("\"10\" - 5"), vm::JS_value::JS_NUMBER(5 as f64))
+    }
+
+    #[test]
+    fn vm_mlp_strnum() {
+        assert_eq!(compile_repl("\"5\" * 10"), vm::JS_value::JS_NUMBER(50 as f64))
+    }
+
+    #[test]
+    fn vm_div_strnum() {
+        assert_eq!(compile_repl("\"10\" / 5"), vm::JS_value::JS_NUMBER(2 as f64))
+    }
+
 }

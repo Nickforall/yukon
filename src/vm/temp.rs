@@ -7,6 +7,5 @@ pub fn js_value_to_string(val: &JS_value) -> String {
         &JS_value::JS_NAN => return "NaN".to_owned(),
         &JS_value::JS_NUMBER(num) => return format!("{}", num),
         &JS_value::JS_STRING(ref s) => return s.clone(),
-        _ => panic!("unknown js val")
     }
 }
