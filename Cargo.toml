@@ -1,0 +1,10 @@
+[package]
+name = "Yukon"
+version = "0.1.0"
+authors = ["Nickforall <hello@nickforall.nl>"]
+
+[dependencies]
+esprit = "0.0.5"
+easter = "0.0.5"
+rustyline = "1.0.0"
+ansi_term = "0.9.0"
