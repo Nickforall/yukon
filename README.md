@@ -1,6 +1,6 @@
 # Yukon
-[![Build Status](https://travis-ci.org/Nickforall/yukon.svg?branch=master)](https://coveralls.io/github/Nickforall/yukon)
-[![Coverage Status](https://coveralls.io/repos/github/Nickforall/yukon/badge.svg)](https://coveralls.io/github/Nickforall/yukon)
+[![Build Status](https://travis-ci.org/Nickforall/yukon.svg?branch=master)](https://travis-ci.org/Nickforall/yukon)
+[![Coverage Status](https://img.shields.io/coveralls/Nickforall/yukon/master.svg)](https://coveralls.io/github/Nickforall/yukon)
 
 Yukon is a javascript engine written in pure rust.
 
