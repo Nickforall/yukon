@@ -1,10 +1,38 @@
 language: rust
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev
+      - cmake
+    sources:
+      - kalakris-cmake
+
 rust:
   - stable
   - beta
   - nightly
+
 matrix:
   allow_failures:
     - rust: nightly
+
 notifications:
   email: false
+
+before_script:
+  - |
+      cargo install cargo-travis &&
+      export PATH=$HOME/.cargo/bin:$PATH
+# the main build
+script:
+  - |
+      cargo build &&
+      cargo test &&
+      cargo bench
+
+after_success:
+# measure code coverage and upload to coveralls.io
+  - cargo coveralls
