@@ -14,8 +14,6 @@ mod bytecode;
 mod tests;
 mod vm;
 
-use vm::JS_value;
-
 #[cfg(not(test))]
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -29,14 +27,10 @@ fn main() {
 
 #[cfg(not(test))]
 fn devel() {
-    let image: bytecode::Image;
-
-    match esprit::script("'test'") {
+    match esprit::script("") {
         Err(why) => panic!("Could not compile {:?}", why),
-        Ok(ast) => image = bytecode::compile_to_image(ast.body)
+        Ok(ast) => println!("{:#?}", ast.body),
     };
-
-    println!("{:#?}", image);
 }
 
 #[cfg(not(test))]

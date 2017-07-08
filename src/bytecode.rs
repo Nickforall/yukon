@@ -1,4 +1,3 @@
-use esprit;
 use easter;
 use easter::stmt::StmtListItem;
 use easter::stmt::Stmt;
@@ -13,6 +12,12 @@ pub enum Instruction {
     SUB,
     MLP,
     DIV,
+    PUSHTRUE,
+    PUSHFALSE,
+    EQ,
+    SEQ,
+    NEQ,
+    SNEQ,
 }
 
 #[derive(Debug, PartialEq)]
@@ -82,6 +87,8 @@ fn compile_expression(image: &mut Image, expr: Expr) {
         },
         Expr::Number(_, number) => image.push_number(number.value),
         Expr::String(_, string_literal) => image.push_string(string_literal.value),
+        Expr::True(_) => image.push_instruction(Instruction::PUSHTRUE),
+        Expr::False(_) => image.push_instruction(Instruction::PUSHFALSE),
         _ => panic!("Unsupported expression"),
     }
 }
@@ -92,6 +99,11 @@ fn compile_bin_op(image: &mut Image, binop: easter::punc::Binop) {
         BinopTag::Minus => image.push_instruction(Instruction::SUB),
         BinopTag::Times => image.push_instruction(Instruction::MLP),
         BinopTag::Div => image.push_instruction(Instruction::DIV),
+        BinopTag::StrictEq => image.push_instruction(Instruction::SEQ),
+        BinopTag::Eq => image.push_instruction(Instruction::EQ),
+        BinopTag::StrictNEq => image.push_instruction(Instruction::SNEQ),
+        BinopTag::NEq => image.push_instruction(Instruction::NEQ),
+
         _ => panic!("Unsupported statement"),
     }
 }

@@ -1,22 +1,25 @@
 mod operations;
 mod temp;
+pub mod types;
 pub mod repl;
 
 use super::bytecode;
 use super::bytecode::Instruction;
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum JS_value {
-    JS_NULL,
-    JS_UNDEFINED,
-    JS_NAN,
-    JS_NUMBER(f64),
-    JS_STRING(String),
+pub enum JsValue {
+    JsNull,
+    JsUndefined,
+    JsNan,
+    JsNumber(f64),
+    JsString(String),
+    JsTrue,
+    JsFalse,
 }
 
 pub struct VM {
     pub image: bytecode::Image,
-    pub stack: Vec<JS_value>,
+    pub stack: Vec<JsValue>,
     pub sp: usize,
     pub cp: usize
 }
@@ -26,19 +29,19 @@ impl VM {
         VM { image: img, stack: Vec::new(), sp: 0, cp: 0 }
     }
 
-    pub fn read_stack_end(&mut self) -> JS_value {
+    pub fn read_stack_end(&mut self) -> JsValue {
         if self.stack.len() < 1 {
-            return JS_value::JS_UNDEFINED
+            return JsValue::JsUndefined
         }
 
         return self.stack[self.stack.len() - 1].clone()
     }
 
-    pub fn push_stack(&mut self, val: JS_value) {
+    pub fn push_stack(&mut self, val: JsValue) {
         self.stack.push(val);
     }
 
-    pub fn pop_stack(&mut self) -> JS_value {
+    pub fn pop_stack(&mut self) -> JsValue {
         self.stack.pop().unwrap()
     }
 
@@ -48,31 +51,57 @@ impl VM {
         for instruction in script {
             match instruction {
                 Instruction::PUSHNUM(num) => {
-                    self.push_stack(JS_value::JS_NUMBER(num))
+                    self.push_stack(JsValue::JsNumber(num))
                 },
                 Instruction::ADD => {
-                    let a: JS_value = self.pop_stack();
-                    let b: JS_value = self.pop_stack();
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
                     self.push_stack(operations::add(&a, &b))
                 },
                 Instruction::SUB => {
-                    let a: JS_value = self.pop_stack();
-                    let b: JS_value = self.pop_stack();
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
                     self.push_stack(operations::sub(&a, &b))
                 },
                 Instruction::MLP => {
-                    let a: JS_value = self.pop_stack();
-                    let b: JS_value = self.pop_stack();
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
                     self.push_stack(operations::mlp(&a, &b))
                 },
                 Instruction::DIV => {
-                    let a: JS_value = self.pop_stack();
-                    let b: JS_value = self.pop_stack();
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
                     self.push_stack(operations::div(&a, &b))
                 },
-                Instruction::PUSHSTRLIT(ref string) => {
-                    self.push_stack(JS_value::JS_STRING(string.clone()))
+                Instruction::EQ => {
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
+                    self.push_stack(operations::eq(&a, &b))
                 },
+                Instruction::NEQ => {
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
+                    self.push_stack(operations::neq(&a, &b))
+                },
+                Instruction::SEQ => {
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
+                    self.push_stack(operations::strict_eq(&a, &b))
+                },
+                Instruction::SNEQ => {
+                    let a: JsValue = self.pop_stack();
+                    let b: JsValue = self.pop_stack();
+                    self.push_stack(operations::strict_neq(&a, &b))
+                },
+                Instruction::PUSHSTRLIT(ref string) => {
+                    self.push_stack(JsValue::JsString(string.clone()))
+                },
+                Instruction::PUSHTRUE => {
+                    self.push_stack(JsValue::JsTrue)
+                }
+                Instruction::PUSHFALSE => {
+                    self.push_stack(JsValue::JsFalse)
+                }
                 _ => panic!("Unknown instruction in bytecode"),
             };
 

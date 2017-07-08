@@ -1,11 +1,13 @@
-use super::JS_value;
+use super::JsValue;
 
-pub fn js_value_to_string(val: &JS_value) -> String {
+pub fn js_value_to_string(val: &JsValue) -> String {
     match val {
-        &JS_value::JS_NULL => return "null".to_owned(),
-        &JS_value::JS_UNDEFINED => return "undefined".to_owned(),
-        &JS_value::JS_NAN => return "NaN".to_owned(),
-        &JS_value::JS_NUMBER(num) => return format!("{}", num),
-        &JS_value::JS_STRING(ref s) => return s.clone(),
+        &JsValue::JsNull => return "null".to_owned(),
+        &JsValue::JsUndefined => return "undefined".to_owned(),
+        &JsValue::JsNan => return "NaN".to_owned(),
+        &JsValue::JsNumber(num) => return format!("{}", num),
+        &JsValue::JsString(ref s) => return s.clone(),
+        &JsValue::JsTrue => return "true".to_owned(),
+        &JsValue::JsFalse => return "false".to_owned(),
     }
 }
