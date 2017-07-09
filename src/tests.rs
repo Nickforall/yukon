@@ -87,79 +87,114 @@ mod vm_tests {
         return engine.read_stack_end();
     }
 
-    #[test]
-    fn vm_add_numnum() {
-        assert_eq!(compile_repl("1 + 2"), vm::JsValue::JsNumber(3 as f64))
-    }
+    mod binary_operations {
+        use super::compile_repl;
+        use super::vm;
 
-    #[test]
-    fn vm_mlp_valid() {
-        assert_eq!(compile_repl("1 * 2"), vm::JsValue::JsNumber(2 as f64))
-    }
+        #[test]
+        fn vm_add_numnum() {
+            assert_eq!(compile_repl("1 + 2"), vm::JsValue::JsNumber(3 as f64))
+        }
 
-    #[test]
-    fn vm_div_valid() {
-        assert_eq!(compile_repl("10 / 2"), vm::JsValue::JsNumber(5 as f64))
-    }
+        #[test]
+        fn vm_mlp_valid() {
+            assert_eq!(compile_repl("1 * 2"), vm::JsValue::JsNumber(2 as f64))
+        }
 
-    #[test]
-    fn vm_sub_valid() {
-        assert_eq!(compile_repl("10 - 2"), vm::JsValue::JsNumber(8 as f64))
-    }
+        #[test]
+        fn vm_div_valid() {
+            assert_eq!(compile_repl("10 / 2"), vm::JsValue::JsNumber(5 as f64))
+        }
 
-    #[test]
-    fn vm_concat_strnum() {
-        assert_eq!(compile_repl("10 + 'hello'"), vm::JsValue::JsString("10hello".to_owned()))
-    }
+        #[test]
+        fn vm_sub_valid() {
+            assert_eq!(compile_repl("10 - 2"), vm::JsValue::JsNumber(8 as f64))
+        }
 
-    #[test]
-    fn vm_concat_strstr() {
-        assert_eq!(compile_repl("'hello, ' + 'world'"), vm::JsValue::JsString("hello, world".to_owned()))
-    }
+        #[test]
+        fn vm_concat_strnum() {
+            assert_eq!(compile_repl("10 + 'hello'"), vm::JsValue::JsString("10hello".to_owned()))
+        }
 
-    #[test]
-    fn vm_sub_invalid() {
-        assert_eq!(compile_repl("10 - \"\""), vm::JsValue::JsNan)
-    }
+        #[test]
+        fn vm_concat_strstr() {
+            assert_eq!(compile_repl("'hello, ' + 'world'"), vm::JsValue::JsString("hello, world".to_owned()))
+        }
 
-    #[test]
-    fn vm_mlp_invalid() {
-        assert_eq!(compile_repl("10 * \"\""), vm::JsValue::JsNan)
-    }
+        #[test]
+        fn vm_sub_invalid() {
+            assert_eq!(compile_repl("10 - \"\""), vm::JsValue::JsNan)
+        }
 
-    #[test]
-    fn vm_div_invalid() {
-        assert_eq!(compile_repl("10 / \"\""), vm::JsValue::JsNan)
-    }
+        #[test]
+        fn vm_mlp_invalid() {
+            assert_eq!(compile_repl("10 * \"\""), vm::JsValue::JsNan)
+        }
 
-    #[test]
-    fn vm_sub_numstr() {
-        assert_eq!(compile_repl("10 - \"5\""), vm::JsValue::JsNumber(5 as f64))
-    }
+        #[test]
+        fn vm_div_invalid() {
+            assert_eq!(compile_repl("10 / \"\""), vm::JsValue::JsNan)
+        }
 
-    #[test]
-    fn vm_mlp_numstr() {
-        assert_eq!(compile_repl("10 * \"5\""), vm::JsValue::JsNumber(50 as f64))
-    }
+        #[test]
+        fn vm_sub_numstr() {
+            assert_eq!(compile_repl("10 - \"5\""), vm::JsValue::JsNumber(5 as f64))
+        }
 
-    #[test]
-    fn vm_div_numstr() {
-        assert_eq!(compile_repl("10 / \"5\""), vm::JsValue::JsNumber(2 as f64))
-    }
+        #[test]
+        fn vm_mlp_numstr() {
+            assert_eq!(compile_repl("10 * \"5\""), vm::JsValue::JsNumber(50 as f64))
+        }
 
-    #[test]
-    fn vm_sub_strnum() {
-        assert_eq!(compile_repl("\"10\" - 5"), vm::JsValue::JsNumber(5 as f64))
-    }
+        #[test]
+        fn vm_div_numstr() {
+            assert_eq!(compile_repl("10 / \"5\""), vm::JsValue::JsNumber(2 as f64))
+        }
 
-    #[test]
-    fn vm_mlp_strnum() {
-        assert_eq!(compile_repl("\"5\" * 10"), vm::JsValue::JsNumber(50 as f64))
-    }
+        #[test]
+        fn vm_sub_numstr_invalid() {
+            assert_eq!(compile_repl("10 - \"a\""), vm::JsValue::JsNan)
+        }
 
-    #[test]
-    fn vm_div_strnum() {
-        assert_eq!(compile_repl("\"10\" / 5"), vm::JsValue::JsNumber(2 as f64))
+        #[test]
+        fn vm_mlp_numstr_invalid() {
+            assert_eq!(compile_repl("10 * \"a\""), vm::JsValue::JsNan)
+        }
+
+        #[test]
+        fn vm_div_numstr_invalid() {
+            assert_eq!(compile_repl("10 / \"a\""), vm::JsValue::JsNan)
+        }
+
+        #[test]
+        fn vm_sub_strnum() {
+            assert_eq!(compile_repl("\"10\" - 5"), vm::JsValue::JsNumber(5 as f64))
+        }
+
+        #[test]
+        fn vm_mlp_strnum() {
+            assert_eq!(compile_repl("\"5\" * 10"), vm::JsValue::JsNumber(50 as f64))
+        }
+
+        #[test]
+        fn vm_div_strnum() {
+            assert_eq!(compile_repl("\"10\" / 5"), vm::JsValue::JsNumber(2 as f64))
+        }
+
+        #[test]
+        fn vm_sub_strnum_invalid() {
+            assert_eq!(compile_repl("\"a\" - 5"), vm::JsValue::JsNan)
+        }
+
+        #[test]
+        fn vm_mlp_strnum_invalid() {
+            assert_eq!(compile_repl("\"a\" * 10"), vm::JsValue::JsNan)
+        }
+
+        #[test]
+        fn vm_div_strnum_invalid() {
+            assert_eq!(compile_repl("\"a\" / 5"), vm::JsValue::JsNan)
+        }
     }
 
     mod booleans {
@@ -234,6 +269,41 @@ mod vm_tests {
         #[test]
         fn str_eq() {
             assert_eq!(compile_repl("'HELLO' == 'HELLO'"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn zerostr_true() {
+            assert_eq!(compile_repl("'0' == false"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn zero_true() {
+            assert_eq!(compile_repl("0 == false"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn seq_true() {
+            assert_eq!(compile_repl("true === true"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn eq_false() {
+            assert_eq!(compile_repl("false == false"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn eq_true() {
+            assert_eq!(compile_repl("true == true"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn seq_false() {
+            assert_eq!(compile_repl("false === false"), vm::JsValue::JsTrue)
+        }
+
+        #[test]
+        fn num_eq() {
+            assert_eq!(compile_repl("1 == 1"), vm::JsValue::JsTrue)
         }
     }
 
