@@ -79,7 +79,10 @@ fn handle_eq_with_bool(boolValue: &JsValue, comparedValue: &JsValue) -> JsValue 
     match comparedValue {
         &JsValue::JsString(ref x) => {
             if !x.is_empty() {
-                return rust_to_js_boolean(boolValue != (&JsValue::JsFalse))
+                match x.clone().parse::<f64>() {
+                    Ok(parsed) => return rust_to_js_boolean(parsed == 0 as f64),
+                    Err(_) => return rust_to_js_boolean(boolValue != (&JsValue::JsFalse)),
+                }
             } else {
                 return rust_to_js_boolean(boolValue == (&JsValue::JsFalse))
             }
@@ -98,6 +101,10 @@ fn handle_eq_with_bool(boolValue: &JsValue, comparedValue: &JsValue) -> JsValue 
 }
 
 pub fn eq(a: &JsValue, b: &JsValue) -> JsValue {
+    if a == b {
+        return rust_to_js_boolean(true)
+    }
+
     if a == &JsValue::JsTrue || a == &JsValue::JsFalse {
         return handle_eq_with_bool(a, b)
     }
