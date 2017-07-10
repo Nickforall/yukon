@@ -2,6 +2,7 @@ use super::JsValue;
 use super::temp::js_value_to_string;
 use super::types::rust_to_js_boolean;
 use super::types::flip_js_bool;
+use super::types::try_js_value_to_js_number;
 
 pub fn add(a: &JsValue, b: &JsValue) -> JsValue {
     match (a, b) {
@@ -13,64 +14,37 @@ pub fn add(a: &JsValue, b: &JsValue) -> JsValue {
 }
 
 pub fn mlp(a: &JsValue, b: &JsValue) -> JsValue {
-    match (a, b) {
-        (&JsValue::JsNumber(x), &JsValue::JsNumber(y)) => {
+    let parsed_a = try_js_value_to_js_number(a);
+    let parsed_b = try_js_value_to_js_number(b);
+
+    match (parsed_a, parsed_b) {
+        (JsValue::JsNumber(x), JsValue::JsNumber(y)) => {
             return JsValue::JsNumber(x * y)
         },
-        (&JsValue::JsString(ref x), &JsValue::JsNumber(y)) => {
-            match x.clone().parse::<f64>() {
-                Ok(parsed_x) => return JsValue::JsNumber(parsed_x * y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
-        (&JsValue::JsNumber(x), &JsValue::JsString(ref y)) => {
-            match y.clone().parse::<f64>() {
-                Ok(parsed_y) => return JsValue::JsNumber(x * parsed_y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
         _ => return JsValue::JsNan
     }
 }
 
 pub fn div(a: &JsValue, b: &JsValue) -> JsValue {
-    match (a, b) {
-        (&JsValue::JsNumber(x), &JsValue::JsNumber(y)) => {
+    let parsed_a = try_js_value_to_js_number(a);
+    let parsed_b = try_js_value_to_js_number(b);
+
+    match (parsed_a, parsed_b) {
+        (JsValue::JsNumber(x), JsValue::JsNumber(y)) => {
             return JsValue::JsNumber(x / y)
         },
-        (&JsValue::JsString(ref x), &JsValue::JsNumber(y)) => {
-            match x.clone().parse::<f64>() {
-                Ok(parsed_x) => return JsValue::JsNumber(parsed_x / y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
-        (&JsValue::JsNumber(x), &JsValue::JsString(ref y)) => {
-            match y.clone().parse::<f64>() {
-                Ok(parsed_y) => return JsValue::JsNumber(x / parsed_y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
         _ => return JsValue::JsNan
     }
 }
 
 pub fn sub(a: &JsValue, b: &JsValue) -> JsValue {
-    match (a, b) {
-        (&JsValue::JsNumber(x), &JsValue::JsNumber(y)) => {
+    let parsed_a = try_js_value_to_js_number(a);
+    let parsed_b = try_js_value_to_js_number(b);
+
+    match (parsed_a, parsed_b) {
+        (JsValue::JsNumber(x), JsValue::JsNumber(y)) => {
             return JsValue::JsNumber(x - y)
         },
-        (&JsValue::JsString(ref x), &JsValue::JsNumber(y)) => {
-            match x.clone().parse::<f64>() {
-                Ok(parsed_x) => return JsValue::JsNumber(parsed_x - y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
-        (&JsValue::JsNumber(x), &JsValue::JsString(ref y)) => {
-            match y.clone().parse::<f64>() {
-                Ok(parsed_y) => return JsValue::JsNumber(x - parsed_y),
-                Err(_) => return JsValue::JsNan,
-            }
-        }
         _ => return JsValue::JsNan
     }
 }
