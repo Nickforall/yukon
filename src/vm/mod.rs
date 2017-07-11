@@ -2,7 +2,9 @@ mod operations;
 mod temp;
 pub mod types;
 pub mod repl;
+pub mod scope;
 
+use self::scope::Scope;
 use super::bytecode;
 use super::bytecode::Instruction;
 
@@ -17,16 +19,17 @@ pub enum JsValue {
     JsFalse,
 }
 
-pub struct VM {
+pub struct VM<'a> {
     pub image: bytecode::Image,
     pub stack: Vec<JsValue>,
+    pub scope: &'a mut Scope,
     pub sp: usize,
     pub cp: usize
 }
 
-impl VM {
-    pub fn new(img: bytecode::Image) -> VM {
-        VM { image: img, stack: Vec::new(), sp: 0, cp: 0 }
+impl<'a> VM<'a> {
+    pub fn new(img: bytecode::Image, scope: &'a mut Scope) -> VM<'a> {
+        VM::<'a> { image: img, stack: Vec::new(), scope: scope, sp: 0, cp: 0 }
     }
 
     pub fn read_stack_end(&mut self) -> JsValue {
@@ -101,7 +104,43 @@ impl VM {
                 }
                 Instruction::PUSHFALSE => {
                     self.push_stack(JsValue::JsFalse)
-                }
+                },
+                Instruction::PUSHVAR(ref string) => {
+                    let a = self.pop_stack();
+                    self.scope.set_var(string.clone(), a);
+                },
+                Instruction::READIDENT(ref string) => {
+                    let a = self.scope.get_var(string.clone());
+                    self.push_stack(a);
+                },
+                Instruction::ASSIGNEQ(ref string) => {
+                    let a = self.pop_stack();
+                    self.scope.set_var(string.clone(), a);
+                },
+                Instruction::ASSIGNPLUSEQ(ref string) => {
+                    let a = self.scope.get_var(string.clone());
+                    let b = self.pop_stack();
+                    self.scope.set_var(string.clone(), operations::add(&a, &b));
+                    self.push_stack(operations::add(&a, &b));
+                },
+                Instruction::ASSIGNSUBEQ(ref string) => {
+                    let a = self.scope.get_var(string.clone());
+                    let b = self.pop_stack();
+                    self.scope.set_var(string.clone(), operations::sub(&a, &b));
+                    self.push_stack(operations::sub(&a, &b));
+                },
+                Instruction::ASSIGNMLPEQ(ref string) => {
+                    let a = self.scope.get_var(string.clone());
+                    let b = self.pop_stack();
+                    self.scope.set_var(string.clone(), operations::mlp(&a, &b));
+                    self.push_stack(operations::mlp(&a, &b));
+                },
+                Instruction::ASSIGNDIVEQ(ref string) => {
+                    let a = self.scope.get_var(string.clone());
+                    let b = self.pop_stack();
+                    self.scope.set_var(string.clone(), operations::div(&a, &b));
+                    self.push_stack(operations::div(&a, &b));
+                },
                 _ => panic!("Unknown instruction in bytecode"),
             };
 

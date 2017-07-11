@@ -2,6 +2,7 @@ extern crate esprit;
 extern crate easter;
 extern crate rustyline;
 extern crate ansi_term;
+extern crate joker;
 
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
@@ -36,6 +37,7 @@ fn devel() {
 #[cfg(not(test))]
 fn run_repl() {
     let mut rl = Editor::<()>::new();
+    let mut scope = vm::scope::Scope::new_global();
 
     loop {
         let readline = rl.readline(">> ");
@@ -43,7 +45,7 @@ fn run_repl() {
             Ok(line) => {
                 rl.add_history_entry(&line);
                 if !line.is_empty() {
-                    compile_repl(&line);
+                    compile_repl(&line, &mut scope);
                 }
             },
             Err(ReadlineError::Interrupted) => {
@@ -63,17 +65,14 @@ fn run_repl() {
 }
 
 #[cfg(not(test))]
-fn compile_repl(code: &str) {
+fn compile_repl(code: &str, mut scope: &mut vm::scope::Scope) {
     let image: bytecode::Image;
 
     match esprit::script(code) {
         Err(why) => panic!("Could not compile {:?}", why),
         Ok(ast) => image = bytecode::compile_to_image(ast.body)
     };
-
-    // println!("{:#?}", image);
-
-    let mut engine = vm::VM::new(image);
+    let mut engine = vm::VM::new(image, &mut scope);
     engine.run();
 
     let retval = engine.read_stack_end();

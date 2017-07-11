@@ -16,8 +16,6 @@ mod bytecode_tests {
 
     #[test]
     fn bytecode_binaryop_plus() {
-        let image: Image;
-
         assert_eq!(Image {
             script: Block {instructions: vec![Instruction::PUSHNUM(1 as f64), Instruction::PUSHNUM(10 as f64), Instruction::ADD]},
             blocks: vec![],
@@ -26,8 +24,6 @@ mod bytecode_tests {
 
     #[test]
     fn bytecode_binaryop_minus() {
-        let image: Image;
-
         assert_eq!(Image {
             script: Block {instructions: vec![Instruction::PUSHNUM(1 as f64), Instruction::PUSHNUM(10 as f64), Instruction::SUB]},
             blocks: vec![],
@@ -36,8 +32,6 @@ mod bytecode_tests {
 
     #[test]
     fn bytecode_binaryop_divide() {
-        let image: Image;
-
         assert_eq!(Image {
             script: Block {instructions: vec![Instruction::PUSHNUM(1 as f64), Instruction::PUSHNUM(10 as f64), Instruction::DIV]},
             blocks: vec![],
@@ -46,8 +40,6 @@ mod bytecode_tests {
 
     #[test]
     fn bytecode_binaryop_multiply() {
-        let image: Image;
-
         assert_eq!(Image {
             script: Block {instructions: vec![Instruction::PUSHNUM(1 as f64), Instruction::PUSHNUM(10 as f64), Instruction::MLP]},
             blocks: vec![],
@@ -70,9 +62,11 @@ mod vm_tests {
     use bytecode::*;
     use esprit;
     use vm;
+    use vm::scope::Scope;
 
     pub fn compile_repl(code: &str) -> vm::JsValue {
         let image: Image;
+        let mut scope = Scope::new_global();
 
         match esprit::script(code) {
             Err(why) => panic!("Could not compile {:?}", why),
@@ -81,7 +75,7 @@ mod vm_tests {
 
         // println!("{:#?}", image);
 
-        let mut engine = vm::VM::new(image);
+        let mut engine = vm::VM::new(image, &mut scope);
         engine.run();
 
         return engine.read_stack_end();
@@ -304,6 +298,41 @@ mod vm_tests {
         #[test]
         fn num_eq() {
             assert_eq!(compile_repl("1 == 1"), vm::JsValue::JsTrue)
+        }
+    }
+
+    mod variables {
+        use super::compile_repl;
+        use super::vm;
+
+        #[test]
+        fn variable_assign() {
+            assert_eq!(compile_repl("var a = 1; a;"), vm::JsValue::JsNumber(1 as f64))
+        }
+
+        #[test]
+        fn variable_reassign() {
+            assert_eq!(compile_repl("var a = 1; a = 10; a;"), vm::JsValue::JsNumber(10 as f64))
+        }
+
+        #[test]
+        fn variable_pluseq() {
+            assert_eq!(compile_repl("var a = 1; a += 10;"), vm::JsValue::JsNumber(11 as f64))
+        }
+
+        #[test]
+        fn variable_subeq() {
+            assert_eq!(compile_repl("var a = 10; a -= 5;"), vm::JsValue::JsNumber(5 as f64))
+        }
+
+        #[test]
+        fn variable_diveq() {
+            assert_eq!(compile_repl("var a = 10; a /= 2;"), vm::JsValue::JsNumber(5 as f64))
+        }
+
+        #[test]
+        fn variable_mlpeq() {
+            assert_eq!(compile_repl("var a = 10; a *= 5;"), vm::JsValue::JsNumber(50 as f64))
         }
     }
 
