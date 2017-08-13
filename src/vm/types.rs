@@ -1,6 +1,25 @@
 use super::JsValue;
+use std::collections::HashMap;
 
-pub fn rust_to_js_boolean(b: bool) -> JsValue {
+#[derive(Clone)]
+pub enum JsObjectType {
+    JsObject,
+}
+
+#[derive(Clone)]
+pub struct JsObject<'a> {
+    t: JsObjectType,
+    prototype: &'a JsObject<'a>,
+    properties: HashMap<String, JsValue>
+}
+
+impl<'a> JsObject<'a> {
+    pub fn new(t: JsObjectType, prototype: &'a JsObject<'a>) -> Self {
+        JsObject {t: t, prototype: prototype, properties: HashMap::new()}
+    }
+}
+
+pub fn rust_to_js_boolean<'a>(b: bool) -> JsValue {
     if b == true {
         return JsValue::JsTrue
     } else {

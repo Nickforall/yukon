@@ -11,5 +11,7 @@ pub fn ret_value_fmt(val: &JsValue) -> String {
         &JsValue::JsString(ref s) => return format!("{}", RGB(152, 195, 121).paint(format!("\"{}\"", s.clone()))),
         &JsValue::JsTrue => return format!("{}", RGB(209, 154, 102).paint("true".to_owned())),
         &JsValue::JsFalse => return format!("{}", RGB(209, 154, 102).paint("false".to_owned())),
+        //TODO: format objects
+        // &JsValue::JsObject(_) => return format!("{}", RGB(209, 154, 102).paint("OBJECT".to_owned())),
     }
 }

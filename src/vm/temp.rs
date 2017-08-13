@@ -9,5 +9,7 @@ pub fn js_value_to_string(val: &JsValue) -> String {
         &JsValue::JsString(ref s) => return s.clone(),
         &JsValue::JsTrue => return "true".to_owned(),
         &JsValue::JsFalse => return "false".to_owned(),
+        &JsValue::JsFalse => return "object".to_owned(),
+
     }
 }

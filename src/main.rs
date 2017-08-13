@@ -28,7 +28,7 @@ fn main() {
 
 #[cfg(not(test))]
 fn devel() {
-    match esprit::script("") {
+    match esprit::script("a++") {
         Err(why) => panic!("Could not compile {:?}", why),
         Ok(ast) => println!("{:#?}", ast.body),
     };
